@@ -25,7 +25,27 @@ class DocumentacionController extends Controller
     public function index()
     {
         $file_content   = Storage::get('public/API-ITAU-CANJE-COMPRA.postman_collection.json');
-        $json           = json_decode($file_content, true);
-        return view('documentacion')->with('json', $json);
+        $json_file      = json_decode($file_content, true);
+        // -----------------------------------------------
+        $env_content    = Storage::get('public/environment_api_itau_canje_compra-local.postman_environment.json');
+        $json_env       = json_decode($env_content, true);
+        $arr_env        = [];
+        // -----------------------------------------------
+        foreach ($json_env['values'] as $k => $v) {
+            $arr_env[$v['key']] = $v;
+        }
+        // -----------------------------------------------
+        $title          = $json_file['info']['name'];
+        $description    = $json_file['info']['description'];
+        $item           = $json_file['item'];
+
+        // -----------------------------------------------
+        return view('documentacion')->with([
+            'json'          => $json_file,
+            'titulo'        => $title,
+            'descripcion'   => $description,
+            'item'          => $item,
+            'env'           => $arr_env,
+        ]);
     }
 }
